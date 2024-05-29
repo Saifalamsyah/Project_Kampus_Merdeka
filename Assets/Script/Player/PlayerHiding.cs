@@ -6,12 +6,21 @@ public class PlayerHiding : MonoBehaviour
     private bool isNearHideSpot = false;
     private Transform hideSpot;
     private Vector3 originalPosition;
+    private Movement playerMovement;
 
+    private void Start()
+    {
+        // Get the PlayerMovement component attached to the player
+        playerMovement = GetComponent<Movement>();
+        if (playerMovement == null)
+        {
+            Debug.LogError("PlayerMovement component not found on the player.");
+        }
+    }
     void Update()
     {
         if (isNearHideSpot && Input.GetKeyDown(KeyCode.E))
         {
-            Debug.Log(isHiding);
             if (isHiding)
             {
                 ExitHideSpot();
@@ -25,6 +34,7 @@ public class PlayerHiding : MonoBehaviour
 
     private void EnterHideSpot()
     {
+        // Check if hideSpot is not null before attempting to hide
         if (hideSpot == null)
         {
             Debug.LogWarning("hideSpot is null. Cannot enter hide spot.");
@@ -51,13 +61,25 @@ public class PlayerHiding : MonoBehaviour
         collider.enabled = false;
 
         // Move player to hide spot position
-        //transform.position = hideSpot.position;
+        transform.position = hideSpot.position;
 
-        //Debug.Log("Entered hide spot: " + hideSpot.name);
+        // Disable the PlayerMovement script
+        if (playerMovement != null)
+        {
+            playerMovement.enabled = false;
+        }
+        Debug.Log("Entered hide spot: " + hideSpot.name);
     }
 
     private void ExitHideSpot()
     {
+        // Check if hideSpot is not null before attempting to exit hiding
+        if (hideSpot == null)
+        {
+            Debug.LogWarning("hideSpot is null. Cannot exit hide spot properly.");
+            return;
+        }
+
         isHiding = false;
 
         // Check if SpriteRenderer and Collider2D are attached to the player
@@ -77,6 +99,12 @@ public class PlayerHiding : MonoBehaviour
         // Move player back to original position
         transform.position = originalPosition;
 
+        // Enable the PlayerMovement script
+        if (playerMovement != null)
+        {
+            playerMovement.enabled = true;
+        }
+
         Debug.Log("Exited hide spot.");
     }
 
@@ -94,8 +122,8 @@ public class PlayerHiding : MonoBehaviour
     {
         if (collision.CompareTag("HideSpot"))
         {
-            isNearHideSpot = false;
-            hideSpot = null;
+            isNearHideSpot = true;
+            hideSpot = collision.transform;
             Debug.Log("Player left the hide spot area.");
         }
     }
