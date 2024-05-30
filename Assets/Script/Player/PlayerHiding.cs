@@ -58,7 +58,7 @@ public class PlayerHiding : MonoBehaviour
 
         // Disable player renderer and collider
         spriteRenderer.enabled = false;
-        collider.enabled = false;
+        collider.enabled = true;
 
         // Move player to hide spot position
         transform.position = hideSpot.position;
@@ -122,7 +122,7 @@ public class PlayerHiding : MonoBehaviour
     {
         if (collision.CompareTag("HideSpot"))
         {
-            isNearHideSpot = true;
+            isNearHideSpot = false;
             hideSpot = collision.transform;
             Debug.Log("Player left the hide spot area.");
         }
